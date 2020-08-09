@@ -53,8 +53,8 @@ class Test_Views(TestCase):
             "password1": "testing321",
             "password2": "testing321"}
 
-            response = self.client.post(self.register_url,cred)
-
+            response = self.client.post(self.register_url,cred) 
+            
             created_user = User.objects.filter(username=cred["username"]).first()
             assert created_user == None
 
