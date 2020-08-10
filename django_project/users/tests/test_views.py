@@ -40,12 +40,6 @@ class Test_Views(TestCase):
         self.assertRedirects(response, self.login_url, status_code=302, 
         target_status_code=200, fetch_redirect_response=True)
         
-    # @pytest.mark.parametrize("user,email,password1,password2,expects", argvalues =[
-    #     ("test_bad", "test_bad@company.com", "testing321", "testing321", "test"),
-    #     ("test_bad", "test_bad@company.com", "testing321", "testing321", "test"), #duplicate
-    #     ("test_bad", "test_bad", "testing321", "testing321", "test"), #bad email
-    #     ("test_bad", "test_bad@company.com", "testing", "testing321", "test"),  #mismatched password
-    # ])
     def test_register_POST_invalid(self):
             cred = {
             "username": "test_bad",

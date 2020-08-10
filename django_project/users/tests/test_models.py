@@ -7,12 +7,12 @@ from pytest import raises
 class Test_Views(TestCase):
     
     def setUp(self):
-        user = User.objects.filter(username="Profile_user").first()
-        if (user):
-            self.user = user
-        else: 
-            self.user = User.objects.create(username="Profile_user", password="testing321")
+        self.user = User.objects.create(username="Profile_user", password="testing321")
         self.profile = self.user.profile
+
+    def tearDown(self):
+        if (self.user.id):
+            self.user.delete()
 
     def test_auto_create_profile(self):
         assert self.profile.user == self.user
