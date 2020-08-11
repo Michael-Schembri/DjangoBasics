@@ -8,16 +8,26 @@ import json
 import pytest
 
 class Test_Views(TestCase):
-    def setUp(self):
-        self.client = Client()
-        self.profile_url = reverse("profile")
-        self.register_url = reverse("register")
-        self.login_url = reverse("login") 
+    @classmethod
+    def setUpClass(cls):
+        cls.client = Client()
+        cls.profile_url = reverse("profile")
+        cls.register_url = reverse("register")
+        cls.login_url = reverse("login") 
+    
+    @classmethod
+    def tearDownClass(cls):
+        pass
 
-    def test_profile_GET_not_logged_in(self):
-        response = self.client.get(self.profile_url, follow=True)
-        self.assertRedirects(response, self.login_url+"?next="+self.profile_url, status_code=302, 
-        target_status_code=200, fetch_redirect_response=True)
+    def setUp(self):
+        self.user = User.objects.create(username="Profile_user", email='profileUser@company.com')
+        self.user.set_password('testing321')
+        self.user.save()
+
+    def tearDown(self):
+        self.client.logout()
+        self.user.delete()
+
 
     def test_register_GET(self):
         response = self.client.get(self.register_url)
@@ -52,5 +62,43 @@ class Test_Views(TestCase):
             created_user = User.objects.filter(username=cred["username"]).first()
             assert created_user == None
 
+    def test_profile_GET_not_logged_in(self):
+        response = self.client.get(self.profile_url, follow=True)
+        self.assertRedirects(response, self.login_url+"?next="+self.profile_url, status_code=302, 
+        target_status_code=200, fetch_redirect_response=True)
+
+    def test_profile_GET_logged_in(self):
+        logged_in = self.client.login(username = self.user.username, password='testing321')
+        assert logged_in == True
+        
+        response = self.client.get(self.profile_url, follow=True) 
+        
+        assert response.status_code == 200
+        assertTemplateUsed(response, "users/profile.html")
+
+    def test_profile_POST_change_email(self):
+        logged_in = self.client.login(username = self.user.username, password='testing321')
+        assert logged_in == True
+        data = {
+            "username": self.user.username,
+            "email": 'updated_email@company.com'}
+
+        response = self.client.post(self.profile_url, data) 
+        
+        updated_user = User.objects.filter(username=data["username"]).first()
+        assert updated_user.email == data['email']
+
+    def test_profile_POST_change_email_invalid(self):
+        logged_in = self.client.login(username = self.user.username, password='testing321')
+        assert logged_in == True
+        data = {
+            "username": self.user.username,
+            "email": 'updated_email'}
+
+        response = self.client.post(self.profile_url, data) 
+        updated_user = User.objects.filter(username=data["username"]).first()
+
+        assert updated_user.email != data['email']
+        assert updated_user.email == self.user.email
  
         
