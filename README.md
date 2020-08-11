@@ -1,6 +1,7 @@
 # Django Basics
 ![Django CI](https://github.com/Michael-Schembri/DjangoBasics/workflows/Django%20CI/badge.svg?branch=master)
-Follow tutorial
+
+Follow tutorial by coreyMS on youtube.
 
 Above and beyond (for later): 
 1. ~~Develop automated testing~~
