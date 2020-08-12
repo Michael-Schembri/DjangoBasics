@@ -1,5 +1,5 @@
 from django.test import TestCase, Client
-from blog.views import home, about
+from blog.views import about, PostListView
 from django.urls import reverse
 from blog.models import Post
 from pytest_django.asserts import assertTemplateUsed
