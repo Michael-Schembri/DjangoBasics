@@ -24,16 +24,21 @@ class Test_Views(TestCase):
         self.user.save()
 
         self.post = self.user.post_set.create(title='Test post', content='test post content')
+        self.post = self.user.post_set.create(title='Test post1', content='test post content')
+        self.post = self.user.post_set.create(title='Test post2', content='test post content')
+        self.post = self.user.post_set.create(title='Test post3', content='test post content')
+
         self.detail_url = reverse('post-detail',  args=[self.post.id])
         self.post_count = Post.objects.count()
+        self.posts_per_page = PostListView.paginate_by
 
     def tearDown(self):
         self.user.delete()
 
     def test_home_GET(self):
         response = self.client.get(self.home_url)
-
-        assert response.context['posts'].count() == self.post_count
+ 
+        assert response.context['posts'].count() == min(self.post_count, self.posts_per_page)
         assert response.status_code == 200
         assertTemplateUsed(response, 'blog/home.html')
     
