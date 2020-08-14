@@ -6,13 +6,19 @@ from blog.views import (
     PostDetailView, 
     PostCreateView, 
     PostUpdateView,
-    PostDeleteView
+    PostDeleteView,
+    UserPostListView
 )
 
 class Test_Urls(TestCase):
+
     def test_home_url_resolves(self):
         url = reverse('blog-home')
         assert resolve(url).func.view_class == PostListView
+
+    def test_user_posts_url_resolves(self):
+        url = reverse('user-posts',args = ['username'])
+        assert resolve(url).func.view_class == UserPostListView
 
     def test_post_detail_url_resolves(self):
         url = reverse('post-detail',args=[1])
