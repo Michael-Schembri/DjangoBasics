@@ -32,6 +32,8 @@ class Test_Views(TestCase):
         self.post_count = Post.objects.count()
         self.posts_per_page = PostListView.paginate_by
 
+        self.user_posts_url = reverse('user-posts',args=[self.user.username])
+
     def tearDown(self):
         self.user.delete()
 
@@ -41,6 +43,12 @@ class Test_Views(TestCase):
         assert response.context['posts'].count() == min(self.post_count, self.posts_per_page)
         assert response.status_code == 200
         assertTemplateUsed(response, 'blog/home.html')
+
+    def test_user_posts_GET(self):
+        response = self.client.get(self.user_posts_url)
+ 
+        assert response.status_code == 200
+        assertTemplateUsed(response, 'blog/user_posts.html')
     
     def test_about_GET(self):
         response = self.client.get(self.about_url)
